@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+
+  "name": "Scheduler",
+  "description": "This extension helps TAMU students easier schedule their courses on Howdy",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "img/icon.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": [ 
+      "jquery/jquery-2.2.4.min.js", 
+      "scheduleHeader.js",
+      "schedule.js", 
+      "background.js" ],
+    "pages": [ "summaryPage.html" ]
+  },
+  "icons": {
+    "64": "img/icon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "clipboardRead",
+    "clipboardWrite",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": [ "<all_urls>" ],
+      "match_about_blank": true,
+      "js": [ "jquery/jquery-2.2.4.min.js", "content.js" ],
+      "all_frames":  true
+    }
+  ]
+}
