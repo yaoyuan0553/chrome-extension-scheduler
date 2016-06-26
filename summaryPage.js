@@ -35,6 +35,7 @@ function setCenter()
 function createTable()
 {
     var newTable = $('<table />', {
+        'class' : 'animate-fadein',
         'border' : '0',
         'cellpadding' : '0',
         'cellspacing' : '0'
