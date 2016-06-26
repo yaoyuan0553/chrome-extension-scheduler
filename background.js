@@ -70,6 +70,8 @@ var test = "SR	22889	CSCE	121	513	CS	4	INTRO PGM DESIGN CONCEPT" +
 
 parseSelect(test);
 
+var summaryPageTabId = 0;
+
 function combineUnparsedString()
 {
     var combinedString = "";
@@ -88,7 +90,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
         var combinedString = combineUnparsedString();
 
-        chrome.tabs.create({ "url": chrome.extension.getURL("summaryPage.html") });
+        chrome.tabs.get(summaryPageTabId, function() {
+            if (chrome.runtime.lastError) {
+                // tab doesn't exist
+                chrome.tabs.create({ "url": chrome.extension.getURL("summaryPage.html") });
+            }
+            else {
+                // tab exists
+                chrome.tabs.update(summaryPageTabId, {active: true});
+                chrome.tabs.reload(summaryPageTabId);
+            }
+        });
 
         console.log(combinedString);
         //chrome.runtime.sendMessage({ message: "displaySchedules", content: combinedString });
@@ -96,5 +108,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     else if (request.message === "saveSchedule") {
         console.log(request.content);
         allContents.push(request.content);
+    }
+    else if (request.message === "scheduleDisplayed") {
+        summaryPageTabId = sender.tab.id;
     }
 });

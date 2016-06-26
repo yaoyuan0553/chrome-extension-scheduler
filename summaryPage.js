@@ -8,6 +8,23 @@ var allColors = ["blue", "purple", "navy", "green", "red", "orange", "maroon"];
 var weekdayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var schooldayCount = 5;
 
+function generateRandomUniqueColorSet(count)   // including start and end
+{
+    var uniqueColorSet = [];
+    var localColors = $.extend(true, [], allColors);
+    if (localColors.length < count) {
+        throw "we've run out of colors, add more colors!";
+    }
+    for (var i = 0; i < count; i++)
+    {
+        var index = Math.floor(Math.random() * localColors.length);
+        uniqueColorSet.push(localColors[index]);
+
+        localColors.splice(index, 1);
+    }
+    return uniqueColorSet;
+}
+
 function setCenter()
 {
     var centeredWidth = $('.centered').width() / 2,
@@ -106,7 +123,8 @@ function insertCourse(section, color, coordinates)
     for (var i = 0; i < coordinates.length; i++) {
         var weekdayArray = timeArray[coordinates[i].timeIndex].children;
         weekdayArray[coordinates[i].weekdayIndex].innerText = section.getFullCourseId();
-        weekdayArray[coordinates[i].weekdayIndex].setAttribute("class", "course " + color);
+        weekdayArray[coordinates[i].weekdayIndex].setAttribute("class", "course");
+        weekdayArray[coordinates[i].weekdayIndex].setAttribute("color", color);
         weekdayArray[coordinates[i].weekdayIndex].setAttribute("data-tooltip", 
             section.getCourseName() + "\r\n" + "Instructor: " + section.instructor + "\r\n" +
             "Time: " + section.getTimeString());
@@ -116,8 +134,12 @@ function insertCourse(section, color, coordinates)
 function displaySchedule(index)
 {
     var schedule = scheduleContents.completeSchedules[index];
+    if (schedule.isDisplayed !== true) {
+        schedule.isDisplayed = true;
+        schedule.uniqueColorSet = generateRandomUniqueColorSet(schedule.sections.length);
+    }
     for (var i = 0; i < schedule.sections.length; i++) {
-        var color = allColors[i % allColors.length];
+        var color = schedule.uniqueColorSet[i];
         var section = schedule.sections[i];
         var coordinates = generateCoordinates(section);
         insertCourse(section, color, coordinates);
@@ -157,5 +179,9 @@ document.addEventListener("DOMContentLoaded", function()
             displaySchedule(++index);
             displayHeader(index);
         }
+    });
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
+        var tab = tabs[0];
+        chrome.runtime.sendMessage({"message": "scheduleDisplayed"});
     });
 });

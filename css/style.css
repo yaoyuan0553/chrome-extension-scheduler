@@ -1,29 +1,29 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
-.blue {
+td[color="blue"] {
   background: #3498db;
 }
 
-.purple {
+td[color="purple"] {
   background: #9b59b6;
 }
 
-.navy {
-  background: #34495e;
+td[color="navy"] {
+  background: #6c6ce0;
 }
 
-.green {
+td[color="green"] {
   background: #2ecc71;
 }
 
-.red {
+td[color="red"] {
   background: #e74c3c;
 }
 
-.orange {
+td[color="orange"] {
   background: #f39c12;
 }
 
-.maroon {
+td[color="maroon"] {
   background: #800000;
 }
 
