@@ -1,3 +1,6 @@
+/// <reference path="../typings/jquery/jquery.d.ts" />
+
+
 jQuery(document).ready(function($){
 	//open/close lateral filter
 	$('.cd-filter-trigger').on('click', function(){

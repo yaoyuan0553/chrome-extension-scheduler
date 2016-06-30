@@ -15,6 +15,10 @@ $(document).ready(function($) {
 			$(this).toggleClass('filter-is-visible', $bool);
 		});
 	}
+	//mobile version - detect click event on filters tab
+	var filter_tab_placeholder = $('.cd-tab-filter .placeholder a'),
+		filter_tab_placeholder_default_value = 'Select',
+		filter_tab_placeholder_text = filter_tab_placeholder.text();
 
     $('.cd-tab-filter li').on('click', function(event) {
 		//detect which tab filter item was selected

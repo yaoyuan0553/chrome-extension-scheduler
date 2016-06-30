@@ -45,10 +45,10 @@
 }
 
 .animate-fadein {
-   -webkit-animation: fadein 0.8s linear forwards;
-   -moz-animation: fadein 0.8s linear forwards;
-   -o-animation: fadein 0.8s linear forwards;
-   animation: fadein 0.8s linear forwards;
+   -webkit-animation: fadein 0.5s linear forwards;
+   -moz-animation: fadein 0.5s linear forwards;
+   -o-animation: fadein 0.5s linear forwards;
+   animation: fadein 0.5s linear forwards;
 }
 
 td[color="blue"] {
