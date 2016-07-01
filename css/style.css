@@ -1,32 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
 
-@keyframes flickerAnimation {
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-o-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-moz-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-@-webkit-keyframes flickerAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-.animate-flicker {
-   -webkit-animation: flickerAnimation 1s infinite;
-   -moz-animation: flickerAnimation 1s infinite;
-   -o-animation: flickerAnimation 1s infinite;
-    animation: flickerAnimation 1s infinite;
-}
-
 @keyframes fadein {
   0%   { opacity:0; }
   100% { opacity:1; }
@@ -45,10 +18,10 @@
 }
 
 .animate-fadein {
-   -webkit-animation: fadein 0.8s linear forwards;
-   -moz-animation: fadein 0.8s linear forwards;
-   -o-animation: fadein 0.8s linear forwards;
-   animation: fadein 0.8s linear forwards;
+   -webkit-animation: fadein 0.5s linear forwards;
+   -moz-animation: fadein 0.5s linear forwards;
+   -o-animation: fadein 0.5s linear forwards;
+   animation: fadein 0.5s linear forwards;
 }
 
 td[color="blue"] {
@@ -196,70 +169,57 @@ table th, table td {
   opacity: 1;
 }
 
+/* Pagination */
+/**************/
 
-h1 {
-  text-size: 22px;
+.pagination {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin-top: 10px;
 }
-a {
-  text-decoration: none;
+.pagination li {
+  display: inline;
+  text-align: center;
 }
-/* Layout */
-/* ------ */
-h1.welcome,
-.button-bar {
-  margin: 20px auto;
-  height: auto;
-}
-.button-bar {
-  background: #ededed;
-  padding: 40px;
-}
-/* General Button */
-/* -------------- */
-.button {
-  position: relative;
-  margin: 0;
-  padding-left: 14px;
-  padding-right: 14px;
-  padding-top: 2.8px;
-  padding-bottom: 2.8px;
-  background: #0d5287;
-  color: white;
+.pagination a {
+  float: left;
+  display: block;
   font-size: 14px;
+  text-decoration: none;
+  padding: 5px 12px;
+  color: #fff;
+  margin-left: -1px;
+  border: 1px solid transparent;
+  line-height: 1.5;
 }
-.button::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 0;
-  height: 0;
+.pagination a.active {
+  cursor: default;
 }
-.button:hover {
-  background: #0585e8;
+.pagination a:active {
+  outline: none;
 }
-/* Arrow Buttons */
-/* ------------- */
-.next::after,
-.prev::after {
-  border-style: solid;
+
+.modal-1 li:first-child a {
+  -moz-border-radius: 6px 0 0 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px 0 0 6px;
 }
-/* Next Button */
-/* ----------- */
-.next::after {
-  right: -22px;
-  border-width: 11px;
-  border-color: transparent transparent transparent #0d5287;
+.modal-1 li:last-child a {
+  -moz-border-radius: 0 6px 6px 0;
+  -webkit-border-radius: 0;
+  border-radius: 0 6px 6px 0;
 }
-.next:hover::after {
-  border-left-color: #0585e8;
+.modal-1 a {
+  border-color: #ddd;
+  color: #4285F4;
+  background: #fff;
 }
-/* Prev Button */
-/* ----------- */
-.prev::after {
-  left: -22px;
-  border-color: transparent #0d5287 transparent transparent;
-  border-width: 11px;
+.modal-1 a:hover {
+  background: #eee;
 }
-.prev:hover::after {
-  border-right-color: #0585e8;
+.modal-1 a.active, .modal-1 a:active {
+  border-color: #4285F4;
+  background: #4285F4;
+  color: #fff;
 }

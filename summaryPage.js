@@ -8,6 +8,9 @@ var allColors = ["blue", "purple", "navy", "green", "red", "orange", "maroon"];
 var weekdayName = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var schooldayCount = 5;
 
+/* html generation  */
+/* --------------- */
+
 function generateRandomUniqueColorSet(count)   // including start and end
 {
     var uniqueColorSet = [];
@@ -34,32 +37,32 @@ function setCenter()
 
 function createTable()
 {
-    var newTable = $('<table />', {
+    var $newTable = $('<table />', {
         'class' : 'animate-fadein',
         'border' : '0',
         'cellpadding' : '0',
         'cellspacing' : '0'
     });
-    $(".tab.centered").append(newTable);
-    newTable.append($('<tr />', {
+    $(".tab.centered").append($newTable);
+    $newTable.append($('<tr />', {
         'class' : 'days'
     }));
-    newTable.children().children().append($('<th />'));
+    $newTable.children().children().append($('<th />'));
     for (var i = 0; i < schooldayCount; i++) {
-        newTable.children().children().append($('<th />', {
+        $newTable.children().children().append($('<th />', {
             'text' : weekdayName[i]
         }));
     }
     for (var i = EARLIEST_HOUR; i < LATEST_HOUR + 12; i++) {
-        newTable.append($('<tr />'));
-        newTable.children().children().last().append($('<td />', {
+        $newTable.append($('<tr />'));
+        $newTable.children().children().last().append($('<td />', {
             'class' : 'time',
             'text' : String(i) + ':00'
         }));
         for (var j = 0; j < schooldayCount - 1; j++) {
-            newTable.children().children().last().append($('<td />'));
+            $newTable.children().children().last().append($('<td />'));
         }
-        newTable.children().children().last().append($('<td />', {
+        $newTable.children().children().last().append($('<td />', {
             'text' : '-'
         }));
     }
@@ -77,6 +80,50 @@ function displayHeader(index)
         text : 'Schedule ' + String(index + 1)
     }));
 }
+
+function createPager(count)
+{
+    var $pager = $('<ul />', {'class' : 'pagination modal-1'});
+    $pager.append('<li><a href="#" class="prev">&laquo</a></li>');
+    for (var i = 0; i < count; i++) {
+        $pager.append('<li> <a href="#">' + String(i+1) + '</a></li>');
+    }
+    $pager.append('<li><a href="#" class="next">&raquo;</a></li>');
+    $pager.children().eq(1).children().attr('class', 'active');
+    $('section').append($pager);
+
+    $('.pagination li').on('click', function(event){
+        if ($(event.target).attr('class') === 'prev') {
+            if (index !== 0) {
+                clearTable();
+                displaySchedule(--index);
+                displayHeader(index);
+                var $prev = $('a.active').parent().prev().children();
+                $('a.active').removeClass('active');
+                $prev.addClass('active');
+            }
+        }
+        else if ($(event.target).attr('class') === 'next') {
+            if (index < scheduleCount - 1) {
+                clearTable();
+                displaySchedule(++index);
+                displayHeader(index);
+                var $next = $('a.active').parent().next().children();
+                $('a.active').removeClass('active');
+                $next.addClass('active');
+            }
+        }
+        else {
+            index = Number($(event.target).text()) - 1;
+            clearTable();
+            displaySchedule(index);
+            displayHeader(index);
+            $('a.active').removeClass('active');
+            $(event.target).addClass('active');
+        }
+    });
+}
+
 
 function TableCoordinate(timeIndex, weekdayIndex)
 {
@@ -161,26 +208,12 @@ if (backgroundWindow) {
 document.addEventListener("DOMContentLoaded", function()
 {
     createTable();
+    createPager(scheduleContents.completeSchedules.length);
     displayHeader(index);
     setCenter();
 
     displaySchedule(index);
-
-    $(".button.prev").click(function() {
-        if (index !== 0) {
-            clearTable();
-            displaySchedule(--index);
-            displayHeader(index);
-        }
-    });
     
-    $(".button.next").click(function() {
-        if (index < scheduleCount - 1) {
-            clearTable();
-            displaySchedule(++index);
-            displayHeader(index);
-        }
-    });
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
         var tab = tabs[0];
         chrome.runtime.sendMessage({"message": "scheduleDisplayed"});

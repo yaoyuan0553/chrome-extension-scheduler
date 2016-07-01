@@ -93,7 +93,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         chrome.tabs.get(summaryPageTabId, function() {
             if (chrome.runtime.lastError) {
                 // tab doesn't exist
-                chrome.tabs.create({ "url": chrome.extension.getURL("summaryPage.html") });
+                chrome.tabs.create({ "url": chrome.extension.getURL("filter-test/index.html") });
             }
             else {
                 // tab exists
