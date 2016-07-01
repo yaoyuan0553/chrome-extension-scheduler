@@ -736,6 +736,12 @@ td[color="maroon"] {
   left: 50%;
 }
 
+.time-table {
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
 *, *:before, *:after {
   margin: 0;
   padding: 0;
@@ -913,11 +919,17 @@ h1.welcome,
 /* Pagination */
 /**************/
 
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
 .pagination {
   list-style: none;
   display: inline-block;
   padding: 0;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 .pagination li {
   display: inline;
