@@ -182,11 +182,16 @@ function Course(courseIrn, courseId, courseName)
     this.courseId = courseId;
     this.courseName = courseName;
     this.sections = [];
+    this.instructorList = [];
 
     // public functions
     this.addNewSection = function(sectionId, instructor)
     {
         this.sections.push(new Section(sectionId, instructor));
+        this.instructorList.push(instructor);
+        this.instructorList = this.instructorList.filter(function(value, index, self) {
+            return self.indexOf(value) === index;
+        });
 
         return this.sections[this.sections.length - 1];
     }

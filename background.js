@@ -1,10 +1,4 @@
-﻿/*chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
-    alert(response);
-}) */
-
-//var itemToStore = "hello i'm stored!";
-//localStorage.setItem("message", itemToStore);
-
+﻿
 var allContents = [];
 
 function parseSelect(str) {

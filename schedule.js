@@ -2,12 +2,12 @@
 
 var parsedArray = ["SR	22889	CSCE	121	513	CS	4	INTRO PGM DESIGN CONCEPT(Restrictions/Details)	MW	08:00 am-08:50 am	90	55	35	John M. Moore	08/29-12/14", "22889", "CSCE", "121", "513", "INTRO PGM DESIGN CONCEPT", "MW", "08", "00", "am", "08", "50", "am", "John M. Moore	", "08/29-12/14"];
 
-window.scheduleContents;
+// window.scheduleContents;
 
 function generateSchedule()
 {
     
-    scheduleContents = new ScheduleContents();
+    window.scheduleContents = new ScheduleContents();
     // chrome.storage.local.set({scheduleContents: scheduleContents}, function() {
     //     console.log('local save successful');
     //     console.log(scheduleContents);
