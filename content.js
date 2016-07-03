@@ -67,13 +67,19 @@ function getInstructorName()
     console.log(instructorName);
 }
 
+function analyzeTable()
+{
+    var $tableBody = $('table.datadisplaytable').children('tbody');
+    
+}
+
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.message === "start") {
         //alert("started");
         console.log("message 'start' received");
         if (document.body.className === "campuspipeline") {
-            //htmlReadingTest();
+
             getInstructorName();
             selectAll();
             //copyAll();

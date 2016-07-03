@@ -74,40 +74,35 @@ function displayHeader(index)
 function createPager(count)
 {
     var $pager = $('.pagination');
+    $pager.children().remove();
     $pager.append('<li><a href="#" class="pager-button prev">&laquo</a></li>');
     for (var i = 0; i < count; i++) {
         $pager.append('<li> <a class="pager-button" href="#">' + String(i+1) + '</a></li>');
     }
     $pager.append('<li><a href="#" class="pager-button next">&raquo;</a></li>');
-    $pager.children().eq(1).children().attr('class', 'active');
+    $pager.children().eq(1).children().addClass('active');
 
     $('.pagination li').on('click', function(event){
         if ($(event.target).hasClass('prev')) {
-            if (index !== 0) {
-                clearTable();
+            // if (index !== 0) {
                 displaySchedule(--index);
-                //displayHeader(index);
                 var $prev = $('a.active').parent().prev().children();
                 $('a.active').removeClass('active');
                 $prev.addClass('active');
-            }
+            // }
         }
         else if ($(event.target).hasClass('next')) {
-            if (index < scheduleCount - 1) {
-                clearTable();
+            // if (index < scheduleCount - 1) {
                 displaySchedule(++index);
-                //displayHeader(index);
                 var $next = $('a.active').parent().next().children();
                 $('a.active').removeClass('active');
                 $next.addClass('active');
-            }
+            // }
         }
         else {
             if (!$(event.target).is($('a.active'))) {
                 index = Number($(event.target).text()) - 1;
-                clearTable();
                 displaySchedule(index);
-                //displayHeader(index);
                 $('a.active').removeClass('active');
                 $(event.target).addClass('active');
             }
@@ -172,16 +167,23 @@ function insertCourse(section, color, coordinates)
 
 function displaySchedule(index)
 {
-    var schedule = scheduleContents.completeSchedules[index];
-    if (schedule.isDisplayed !== true) {
-        schedule.isDisplayed = true;
-        schedule.uniqueColorSet = generateRandomUniqueColorSet(schedule.sections.length);
+    var scheduleCount = scheduleContents.isFiltered ? scheduleContents.filteredSchedules.length : scheduleContents.completeSchedules.length;
+    if (index >= 0 && index < scheduleCount) {
+        var schedule = scheduleContents.isFiltered ? scheduleContents.filteredSchedules[index] : scheduleContents.completeSchedules[index];
+        clearTable();
+        if (schedule.isDisplayed !== true) {
+            schedule.isDisplayed = true;
+            schedule.uniqueColorSet = generateRandomUniqueColorSet(schedule.sections.length);
+        }
+        for (var i = 0; i < schedule.sections.length; i++) {
+            var color = schedule.uniqueColorSet[i];
+            var section = schedule.sections[i];
+            var coordinates = generateCoordinates(section);
+            insertCourse(section, color, coordinates);
+        }
     }
-    for (var i = 0; i < schedule.sections.length; i++) {
-        var color = schedule.uniqueColorSet[i];
-        var section = schedule.sections[i];
-        var coordinates = generateCoordinates(section);
-        insertCourse(section, color, coordinates);
+    else {
+        index = index < 0 ? 0 : scheduleCount - 1;
     }
 }
 
@@ -191,7 +193,7 @@ function createInstructorList()
     var id = 1;
     var $block = $('div.instructor-list');
     $block.append("<ul class='cd-filter-content cd-filters list'>" + 
-        "<li><input class='filter' data-filter='all' type='radio' name='all' id='radio0' checked>" +
+        "<li><input class='filter' data-filter='' type='radio' name='all' id='radio0' checked>" +
 		"<label class='radio-label' for='radio0'>All</label></li>");
     
     for (var i = 0; i < courses.length; i++) {
@@ -223,7 +225,7 @@ function createInstructorList()
 }
 
 
-var index = 0, scheduleCount = 0;
+var index = 0;
 var scheduleContents;
 if (!chrome.extension) {
     throw "chrome extension not enabled";
@@ -231,13 +233,13 @@ if (!chrome.extension) {
 var backgroundWindow = chrome.extension.getBackgroundPage();
 if (backgroundWindow) {
     scheduleContents = backgroundWindow.scheduleContents;
-    scheduleCount = scheduleContents.completeSchedules.length;
 }
 
 
 var buttonFilter = {
     $filters: null,
     groups: [],
+    filterResult: "",
 
     init: function() {
         var self = this;
@@ -297,13 +299,35 @@ var buttonFilter = {
     concatenate: function() {
         var self = this;
 
-        self.outputString = '';
+        var filterResult = "";
 
+        scheduleContents.filteredSchedules = [];
         for (var i = 0, group; group = self.groups[i]; i++) {
-            self.outputString += group.active;
+            filterResult += group.active;
+            if (String(group.active).length > 0) self.addFilteredList(group.active);
         }
 
-        !self.outputString.length && (self.outputString = 'all');
+        if (filterResult.length === 0 && self.filterResult.length !== 0) {
+            createPager(scheduleContents.completeSchedules.length);
+            scheduleContents.isFiltered = false;
+            displaySchedule(index=0);
+        }
+        else if (filterResult.length !== 0 || self.filterResult.length !== 0) {
+            createPager(scheduleContents.filteredSchedules.length);
+            scheduleContents.isFiltered = true;
+            displaySchedule(index=0);
+        }
+        self.filterResult = filterResult;
+    },
+
+    addFilteredList: function(keywords) {
+        for (var i = 0, schedule; schedule = scheduleContents.completeSchedules[i]; i++) {
+            for (var j = 0; j < keywords.length; j++) {
+                if (schedule.instructorList.indexOf(keywords[j]) > -1) {
+                    scheduleContents.filteredSchedules.push(schedule);
+                }
+            }
+        }
     }
 }
 
@@ -349,15 +373,15 @@ $(document).ready(function($) {
 		( scrollTop >= offsetTop ) ? $('.cd-main-content').addClass('is-fixed') : $('.cd-main-content').removeClass('is-fixed');
 	}
 
-    createTable();
     createPager(scheduleContents.completeSchedules.length);
+
     displaySchedule(index);
 
     createInstructorList();
 
     $('.instructor-list input:radio').on('click', function(event){
         $allButton = $(".instructor-list input[name='all']");
-        if ($(event.target).data('filter') === 'all') {
+        if ($(event.target).data('filter') === '') {
             $('.instructor-list input').prop('checked', false);
             $allButton.prop('checked', true);
         }

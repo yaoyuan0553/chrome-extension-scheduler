@@ -200,11 +200,13 @@ function Course(courseIrn, courseId, courseName)
 function Schedule()
 {
     this.sections = [];
+    this.instructorList = [];
 }
 
 Schedule.prototype.addSection = function(section)
 {
     this.sections.push(section);
+    this.instructorList.push(section.instructor);
 }
 
 Schedule.prototype.printSchedule = function()
@@ -273,6 +275,8 @@ function ScheduleContents()
 
     this.scheduleChecker = new ScheduleChecker();
     this.completeSchedules = [];
+    this.isFiltered = false;
+    this.filteredSchedules = [];
     this.courses = [];
 
     this.addNewCourse = function(courseIrn, courseId, courseName)
