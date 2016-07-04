@@ -69,10 +69,11 @@ function getInstructorName()
 
 var tableReader = {
 
+    isAlreadyRead: false,
     allHeaders: [],
     $tableBody: $('table.datadisplaytable').children('tbody'),
 
-    storedData: {},
+    rows: [],
 
     init : function() {
         var self = this;
@@ -85,9 +86,12 @@ var tableReader = {
             }
             var name = $(this).text().trim().split(" ")[0];
             self.allHeaders.push(name);
-            self.storedData[name] = [];
         });
-        self.categorizeData();
+    },
+
+    startParsing : function() {
+        console.log('table parsing started');
+        categorizeData();
     },
 
     categorizeData : function() {
@@ -97,27 +101,33 @@ var tableReader = {
         self.$tableBody.find('tr').each(function(i, val) {
             if (i < 2) return;
             var $val = $(val);
-            if ($val.attr('style') === style || style === "") {
-                console.log(val);
+            // check if the element is just a sub row
+            if ($val.attr('style') === style) {
+                var data = self.rows[self.rows.length - 1];
+                $val.children('td').each(function(i, val) {
+                    var textVal = $(val).text().trim().split('(')[0].trim();
+                    if (textVal) {
+                        data[self.allHeaders[i]].push(textVal);
+                    }
+                });
+            }
+            else {  // main row
+                var newData = {};
+                $val.children('td').each(function(i, val) {
+                    newData[self.allHeaders[i]] = [];
+                    newData[self.allHeaders[i]].push($(val).text().trim().split('(')[0].trim());
+                });
+                self.rows.push(newData);
             }
             style = $val.attr('style');
         });
+        self.isAlreadyRead = true;
     }
 }
 
-function analyzeTable()
+function learnTableHeader()
 {
-    var $tableBody = $('table.datadisplaytable').children('tbody');
-    var allHeaders = [];
-    $tableBody.find('th').each(function() {
-        var name = "";
-        if ($(this).siblings().length < 1) {
-            console.log('this is a table title');
-            return;
-        }
-        name = $(this).text().trim().split(" ")[0];
-        allHeaders.push(name);
-    });
+    window.getSelection().anchorNode;
 }
 
 
@@ -135,7 +145,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             //copyAll();
             var selectedText = getSelectedText();
             deselectAll();
-            chrome.runtime.sendMessage({ message: "saveSchedule", content: selectedText });
+            if (!tableReader.isAlreadyRead) {
+                chrome.runtime.sendMessage({ message: "saveSchedule", content: selectedText });
+            }
         }
     }
 });
