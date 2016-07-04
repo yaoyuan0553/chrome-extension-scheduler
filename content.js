@@ -67,10 +67,57 @@ function getInstructorName()
     console.log(instructorName);
 }
 
+var tableReader = {
+
+    allHeaders: [],
+    $tableBody: $('table.datadisplaytable').children('tbody'),
+
+    storedData: {},
+
+    init : function() {
+        var self = this;
+
+        self.initDataIndex = self.$tableBody.find('th').parent().length;
+        self.$tableBody.find('th').each(function() {
+            if ($(this).siblings().length < 1) {
+                console.log('this is a table title');
+                return;
+            }
+            var name = $(this).text().trim().split(" ")[0];
+            self.allHeaders.push(name);
+            self.storedData[name] = [];
+        });
+        self.categorizeData();
+    },
+
+    categorizeData : function() {
+        var self = this;
+
+        var style = "";
+        self.$tableBody.find('tr').each(function(i, val) {
+            if (i < 2) return;
+            var $val = $(val);
+            if ($val.attr('style') === style || style === "") {
+                console.log(val);
+            }
+            style = $val.attr('style');
+        });
+    }
+}
+
 function analyzeTable()
 {
     var $tableBody = $('table.datadisplaytable').children('tbody');
-    
+    var allHeaders = [];
+    $tableBody.find('th').each(function() {
+        var name = "";
+        if ($(this).siblings().length < 1) {
+            console.log('this is a table title');
+            return;
+        }
+        name = $(this).text().trim().split(" ")[0];
+        allHeaders.push(name);
+    });
 }
 
 
@@ -79,6 +126,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         //alert("started");
         console.log("message 'start' received");
         if (document.body.className === "campuspipeline") {
+
+            //analyzeTable();
+            tableReader.init();
 
             getInstructorName();
             selectAll();
